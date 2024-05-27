@@ -1,0 +1,32 @@
+use core::f32;
+
+use rand::{thread_rng, Rng};
+
+#[derive(Debug)]
+struct Network {
+    layers: Vec<Layer>,
+}
+#[derive(Debug)]
+struct Layer {
+    weights: Vec<f32>,
+}
+type Weights = Vec<f32>;
+impl Network {
+    fn create(n_of_layers: usize, n_of_weights: usize) -> Self {
+        let mut rng = thread_rng();
+        let mut layers: Vec<Layer> = Vec::new();
+        for _layer in 0..n_of_layers {
+            let mut weights: Vec<f32> = Vec::new();
+            for _weight in 0..n_of_weights {
+                weights.push(rng.gen_range(0.0..1.0));
+            }
+            layers.push(Layer { weights });
+        }
+        Self { layers }
+    }
+}
+
+fn main() {
+    let network = Network::create(2, 5);
+    println!("{:#?}", network);
+}
