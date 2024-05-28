@@ -72,7 +72,7 @@ impl Weights {
             activation += self.data[i] * inputs.data[i];
         }
         activation *= -1.0;
-        return 1.0 / (1.0 + activation.exp());
+        1.0 / (1.0 + activation.exp())
     }
 }
 
