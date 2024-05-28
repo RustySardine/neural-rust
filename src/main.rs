@@ -1,5 +1,3 @@
-use core::f32;
-
 use rand::{thread_rng, Rng};
 
 #[derive(Debug)]
@@ -83,5 +81,5 @@ fn main() {
     };
     let outcome = network.forward_propagate(input);
 
-    println!("{:#?}", outcome);
+    println!("{outcome:#?}");
 }
