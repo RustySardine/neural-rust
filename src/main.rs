@@ -11,6 +11,8 @@ struct Layer {
 #[derive(Debug, Clone)]
 struct Weights {
     data: Vec<f64>,
+    output: Option<f64>,
+    error: Option<f64>,
 }
 
 #[derive(Debug)]
@@ -42,13 +44,14 @@ impl Network {
         layers.push(output_layer);
         Self { layers }
     }
-    fn forward_propagate(&self, inputs: Input) -> Input {
+    fn forward_propagate(&mut self, inputs: Input) -> Input {
         let mut output = inputs;
 
-        for layer in &self.layers {
+        for layer in &mut self.layers {
             let mut new_inputs = Vec::new();
-            for neuron in &layer.weights_list {
-                new_inputs.push(neuron.clone().activate(&output));
+            for neuron in &mut layer.weights_list {
+                neuron.output = Some(neuron.clone().activate(&output));
+                new_inputs.push(neuron.output.unwrap());
             }
             output.data = new_inputs;
         }
@@ -62,7 +65,11 @@ impl Weights {
         for _weight in 0..n_of_weights {
             weights.push(rng.gen_range(0.0..1.0));
         }
-        Self { data: weights }
+        Self {
+            data: weights,
+            output: None,
+            error: None,
+        }
     }
     fn activate(&mut self, inputs: &Input) -> f64 {
         let mut activation: f64 = self.data.pop().unwrap();
@@ -72,10 +79,14 @@ impl Weights {
         activation *= -1.0;
         1.0 / (1.0 + activation.exp())
     }
+    fn derivative_output(&self) -> f64 {
+        self.output.unwrap() * (1.0 - self.output.unwrap())
+    }
+    fn calc_error(&mut self) {}
 }
 
 fn main() {
-    let network = Network::create(2, 1, 2);
+    let mut network = Network::create(2, 1, 2);
     let input = Input {
         data: vec![1.0, 0.0],
     };
